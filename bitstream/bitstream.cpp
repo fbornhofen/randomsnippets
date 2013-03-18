@@ -36,6 +36,6 @@ void Bitstream::writeBit(int bit)
 void Bitstream::write(bs_raw* data, int nBits)
 {
     for (int i = 0; i < nBits; i++) {
-        // ...
+        writeBit((data[i/8] & (1 << (i%8))) > 0 ? 1 : 0);
     }
 }
