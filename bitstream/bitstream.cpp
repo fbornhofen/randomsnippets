@@ -22,7 +22,8 @@ bs_raw* Bitstream::getCurrentByte()
 
 int Bitstream::getBitOffset()
 {
-    return m_position % 8;
+    // make bits appear in natural order
+    return 7 - (m_position % 8);
 }
 
 void Bitstream::writeBit(int bit)
@@ -35,7 +36,7 @@ void Bitstream::writeBit(int bit)
 
 void Bitstream::write(bs_raw* data, int nBits)
 {
-    for (int i = 0; i < nBits; i++) {
+    for (int i = nBits - 1; i >= 0; i--) {
         writeBit((data[i/8] & (1 << (i%8))) > 0 ? 1 : 0);
     }
 }

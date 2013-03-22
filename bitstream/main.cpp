@@ -36,7 +36,7 @@ void test03WriteBit2()
     for (int i = 0; i < 8; i++) {
         b.writeBit(i%2);
     }
-    ASSERT(b.getData()[0] == 0xAA, "should have written 0s and 1s");
+    ASSERT(b.getData()[0] == 0x55, "should have written 0s and 1s");
 }
 
 void test04Write()
@@ -53,12 +53,13 @@ void test05WriteMultibyte()
     Bitstream b(1024);
     bs_raw bs[3] = { 0x5, 0x6, 0x7 };
     bs_raw expct[2] = { 0xBB, 0x80 };
+    //bs_raw expct[2] = { 0xF5, 0x01 };
     b.write(&bs[0], 3);
     b.write(&bs[1], 3);
     b.write(&bs[2], 3);
     const bs_raw* data = b.getData();
-    bool res = data[0] == 0xF5 && data[1] == 0x01;
-    ASSERT(res, "should have written 0xF5 0x01");
+    bool res = data[0] == expct[0] && data[1] == expct[1];
+    ASSERT(res, "did not write correct multibyte");
 }
 
 int main()
