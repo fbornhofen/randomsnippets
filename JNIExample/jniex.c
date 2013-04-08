@@ -15,6 +15,7 @@ JNIEXPORT jbyteArray JNICALL Java_JniEx_incBytes(JNIEnv *env, jclass cls, jbyteA
     for (i = 0; i < len; i++) {
        bytes[i]++; 
     }
+    sleep(5);
     res = (*env)->NewByteArray(env, len);
     (*env)->SetByteArrayRegion(env, res, 0, len, (jbyte*)bytes);
     free(bytes);

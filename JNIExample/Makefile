@@ -4,7 +4,7 @@ CFLAGS=$(INCDIR)
 
 all: libjniex c
 
-libjniex: jniex.c JniEx.h
+libjniex: jniex.c
 	javac JniEx.java
 	javah -jni JniEx
 	gcc -fpic -shared jniex.c -o libjniexc.dylib $(CFLAGS)
