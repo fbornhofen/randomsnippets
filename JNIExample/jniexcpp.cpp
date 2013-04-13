@@ -10,7 +10,8 @@ JNIEXPORT jbyteArray JNICALL Java_JniEx_incBytes(JNIEnv *env, jobject obj, jbyte
     int len = (int)(env->GetArrayLength(bs));
     unsigned char* bytes = new unsigned char[len];
     jbyteArray res;
-    memcpy(bytes, (void*)(env->GetByteArrayElements(bs, 0)), len);
+    unsigned char* arrPtr = (unsigned char*)env->GetByteArrayElements(bs, 0);
+    memcpy(bytes, (void*)arrPtr, len);
     int i;
     for (i = 0; i < len; i++) {
        bytes[i]++; 
@@ -18,6 +19,7 @@ JNIEXPORT jbyteArray JNICALL Java_JniEx_incBytes(JNIEnv *env, jobject obj, jbyte
     sleep(5);
     res = env->NewByteArray(len);
     env->SetByteArrayRegion(res, 0, len, (jbyte*)bytes);
+    env->ReleaseByteArrayElements(bs, (jbyte*)arrPtr, 0);
     delete [] bytes;
     return res;    
 }
