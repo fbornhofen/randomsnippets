@@ -28,7 +28,10 @@ func swap(a []int, n int, m int) {
 	a[m] = tmp
 }
 
-func partition(a []int, l int, h int) int {
+func Quicksort(a []int, l int, h int) {
+	if (l >= h) {
+		return
+	}
 	p := a[(l+h) / 2]
 	i := l
 	j := h
@@ -39,22 +42,11 @@ func partition(a []int, l int, h int) int {
 		for a[j] > p {
 			j--
 		}
-		if i > j {
-			break
-		}
 		swap(a, i, j)
 		i++
 		j--
 	}
-	return i
-}
-
-func Quicksort(a []int, l int, h int) {
-	if (l >= h) {
-		return
-	}
-	m := partition(a, l, h)
-	Quicksort(a, l, m)
-	Quicksort(a, m+1, h)
+	Quicksort(a, l, j)
+	Quicksort(a, i, h)
 }
 
