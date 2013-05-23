@@ -18,6 +18,16 @@ func stripBuffer(b []byte) []byte {
 	return res[:j]
 }
 
+func collectNth(b []byte, n int) {
+	res := make([]byte, len(b)/n + 1)
+	j := 0
+	for i := 0; j < len(b); i++ {
+		res[i] = b[j]
+		j += n
+	}
+	return res
+}
+
 func main() {
 	flag.Parse()
 	args := flag.Args()
