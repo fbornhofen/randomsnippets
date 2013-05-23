@@ -18,7 +18,7 @@ func stripBuffer(b []byte) []byte {
 	return res[:j]
 }
 
-func collectNth(b []byte, n int) {
+func collectNth(b []byte, n int) []byte {
 	res := make([]byte, len(b)/n + 1)
 	j := 0
 	for i := 0; j < len(b); i++ {
