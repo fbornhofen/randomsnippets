@@ -8,16 +8,16 @@ import (
 )
 
 type FreqTuple struct {
-	c byte
-	n int
-	p float32
+	character byte
+	count int
+	percentage float32
 }
 
 type FreqTuples []*FreqTuple
 
 func (f FreqTuples) Less(i int, j int) bool {
 	// Sort in reverse order
-	return f[i].n > f[j].n
+	return f[i].count > f[j].count
 }
 
 func (f FreqTuples) Swap(i int, j int) {
@@ -56,9 +56,9 @@ func makeFrequencyTable(dict map[byte]int) FreqTuples {
 	i := 0
 	for k, v := range dict {
 		fs[i] = new(FreqTuple)
-		fs[i].c = k
-		fs[i].n = v
-		fs[i].p = float32(v)/float32(l)
+		fs[i].character = k
+		fs[i].count = v
+		fs[i].percentage = float32(v)/float32(l)
 		i++
 	}
 	sort.Sort(fs)
@@ -83,6 +83,6 @@ func main() {
 	}
 	sorted := makeFrequencyTable(freq)
 	for _, v := range sorted {
-		fmt.Printf("%c - %d (%f)\n", v.c, v.n, v.p)
+		fmt.Printf("%c - %d (%f)\n", v.character, v.count, v.percentage)
 	}
 }
