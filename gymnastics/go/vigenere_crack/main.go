@@ -65,6 +65,25 @@ func makeFrequencyTable(dict map[byte]int) FreqTuples {
 	return fs
 }
 
+func countCharcaters(buf []byte) map[byte]int {
+	freq := make(map[byte]int)
+	for i := 0; i < len(buf); i++ {
+		freq[buf[i]]++
+	}
+	return freq
+
+}
+
+func analyze(buf []byte, maxstep int) []FreqTuples {
+	res := make([]FreqTuples, maxstep)
+	for i := 1; i <= maxstep; i++ {
+		tmpbuf := collectNth(buf, i)
+		freq := countCharcaters(tmpbuf)
+		res[i-1] = makeFrequencyTable(freq)
+	}
+	return res
+}
+
 func main() {
 	flag.Parse()
 	args := flag.Args()
@@ -75,14 +94,14 @@ func main() {
 
 	f, _ := os.Open(args[0])
 	buf := make([]byte, 1024)
-	freq := make(map[byte]int)
 	r, _ := f.Read(buf)
 	stripped := stripBuffer(buf[:r])
-	for i := 0; i < len(stripped); i++ {
-		freq[stripped[i]]++
-	}
-	sorted := makeFrequencyTable(freq)
-	for _, v := range sorted {
-		fmt.Printf("%c - %d (%f)\n", v.character, v.count, v.percentage)
+	freqs := analyze(stripped, 5)
+	for _, v := range freqs {
+		for _, chars := range v {
+			fmt.Printf("%f - ", chars.percentage)
+			//fmt.Printf("%c - %d (%f)\n", chars.character, chars.count, chars.percentage)
+		}
+		fmt.Printf("\n")
 	}
 }
