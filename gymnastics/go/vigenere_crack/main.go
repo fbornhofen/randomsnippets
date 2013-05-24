@@ -10,6 +10,7 @@ import (
 type FreqTuple struct {
 	c byte
 	n int
+	p float32
 }
 
 type FreqTuples []*FreqTuple
@@ -49,13 +50,15 @@ func collectNth(b []byte, n int) []byte {
 	return res
 }
 
-func sortedByFrequency(dict map[byte]int) FreqTuples {
-	fs := make(FreqTuples, len(dict))
+func makeFrequencyTable(dict map[byte]int) FreqTuples {
+	l := len(dict)
+	fs := make(FreqTuples, l)
 	i := 0
 	for k, v := range dict {
 		fs[i] = new(FreqTuple)
 		fs[i].c = k
 		fs[i].n = v
+		fs[i].p = float32(v)/float32(l)
 		i++
 	}
 	sort.Sort(fs)
@@ -78,8 +81,8 @@ func main() {
 	for i := 0; i < len(stripped); i++ {
 		freq[stripped[i]]++
 	}
-	sorted := sortedByFrequency(freq)
+	sorted := makeFrequencyTable(freq)
 	for _, v := range sorted {
-		fmt.Printf("%c - %d\n", v.c, v.n)
+		fmt.Printf("%c - %d (%f)\n", v.c, v.n, v.p)
 	}
 }
