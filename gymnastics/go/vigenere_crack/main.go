@@ -50,15 +50,14 @@ func collectNth(b []byte, n int) []byte {
 	return res
 }
 
-func makeFrequencyTable(dict map[byte]int) FreqTuples {
-	l := len(dict)
-	fs := make(FreqTuples, l)
+func makeFrequencyTable(dict map[byte]int, buflen int) FreqTuples {
+	fs := make(FreqTuples, len(dict))
 	i := 0
 	for k, v := range dict {
 		fs[i] = new(FreqTuple)
 		fs[i].character = k
 		fs[i].count = v
-		fs[i].percentage = float32(v)/float32(l)
+		fs[i].percentage = float32(v)/float32(buflen)
 		i++
 	}
 	sort.Sort(fs)
@@ -79,7 +78,7 @@ func analyze(buf []byte, maxstep int) []FreqTuples {
 	for i := 1; i <= maxstep; i++ {
 		tmpbuf := collectNth(buf, i)
 		freq := countCharcaters(tmpbuf)
-		res[i-1] = makeFrequencyTable(freq)
+		res[i-1] = makeFrequencyTable(freq, len(buf))
 	}
 	return res
 }
@@ -96,12 +95,18 @@ func main() {
 	buf := make([]byte, 1024)
 	r, _ := f.Read(buf)
 	stripped := stripBuffer(buf[:r])
-	freqs := analyze(stripped, 5)
+
+	freqs := makeFrequencyTable(countCharcaters(stripped), len(stripped))
+	for _, v := range(freqs) {
+		fmt.Printf("%c - %d (%f)\n", v.character, v.count, v.percentage)
+	}
+
+	/*freqs := analyze(stripped, 5)
 	for _, v := range freqs {
 		for _, chars := range v {
 			fmt.Printf("%f - ", chars.percentage)
 			//fmt.Printf("%c - %d (%f)\n", chars.character, chars.count, chars.percentage)
 		}
 		fmt.Printf("\n")
-	}
+	}*/
 }
