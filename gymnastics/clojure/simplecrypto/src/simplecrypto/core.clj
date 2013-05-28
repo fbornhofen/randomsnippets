@@ -23,12 +23,15 @@
 (defn analyze-frequencies [s]
   (let [freqs (frequencies s)
         char-freq-pairs (seq freqs)
-        sorted-freqs (sort #(> (second %1) (second %2)) char-freq-pairs)]
-    sorted-freqs))
+        sorted-freqs (sort #(> (second %1) (second %2)) char-freq-pairs)
+        total (reduce + (map second char-freq-pairs))]
+    (map
+     (fn [tup] [(first tup) (second tup) (float (/ (second tup) total))])
+     sorted-freqs)))
 
 (defn analyze-strided-frequencies [s max-stride]
   (let [r (range (inc max-stride))
-        partitions (map #(collect-nth s %1) r)]
+        partitions (map #(analyze-frequencies (collect-nth s %1)) r)]
     partitions))
 
 (defn analyze []
