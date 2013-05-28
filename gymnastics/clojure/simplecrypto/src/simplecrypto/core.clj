@@ -37,21 +37,32 @@
     (map most-frequent-char stripped-partitions)))
 
 (defn probable-key [s n]
-  (let [most-frequent (most-frequent-per-partition s n)
+  (let [allcaps (string/upper-case s)
+        most-frequent (most-frequent-per-partition allcaps n)
         diffs (map (fn [c]
-                     (- (int c) (int \E))) most-frequent)]
+                     (- (int \E) (int c))) most-frequent)]
     diffs))
 
+(defn string-to-ints [s]
+  (map #(- (int %1) (int \A)) s))
+
+(defn ints-to-string [ints]
+  (apply str (map #(char (+ (int \A) %1)) ints)))
+
 (defn decrypt [s diffs-vec]
-  (let [key-len (count diffs-vec)]
-    (apply str
-           (map-indexed
-            (fn [i chr]
-              (if (is-letter chr)
-                (char (+ (int chr) (nth diffs-vec (mod i key-len))))
-                chr))
-            s))))
-                          
+  (ints-to-string
+   (let [key-len (count diffs-vec)
+         allcaps (string/upper-case s)
+         nums (string-to-ints allcaps)]
+     (map-indexed
+      (fn [i chr]
+        (if (and (<= 0 chr) (> 26 chr))
+          (let [d (nth diffs-vec (mod i key-len))
+                tmp (+ chr d)]
+                                        ;(printf "[%d] %d : %d\n" i chr diffs-ve)
+            (mod tmp 26))
+          chr))
+      nums))))
   
 (defn frequency-tuples [s]
   (let [freqs (frequencies s)
