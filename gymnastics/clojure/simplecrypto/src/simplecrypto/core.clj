@@ -112,3 +112,12 @@
                             (printf "  %.4f" val))
                           (take 5 f)))
                     (println)) freqs))))
+
+
+(defn multi-cypher []
+  (let [s "dies ist ein text fuer eine multiplikationschiffre"
+        nums (string-to-ints (string/upper-case s))
+        key 17]
+    (ints-to-string
+     (map (fn [n]
+            (mod (* n key) 26)) nums))))
