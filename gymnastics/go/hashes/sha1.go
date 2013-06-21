@@ -21,8 +21,8 @@ func MakeShaBuffer(buf []byte) *ShaBuffer {
 	shaBuf := new(ShaBuffer)
 	shaBuf.originalLength = len(buf)
 	newLen := len(buf) + 1
-	if newLen % 512 != 0 {
-		newLen = newLen + 512 - newLen % 512
+	if newLen % 64 != 56 {
+		newLen = newLen + 56 - newLen % 64
 	}
 	newLen += 8 // original length
 	fmt.Printf("newLen is %d\n", newLen)
@@ -42,10 +42,10 @@ func MakeShaBuffer(buf []byte) *ShaBuffer {
 }
 
 func (b *ShaBuffer) chunkify() {
-	numChunks := len(b.data)/512
+	numChunks := len(b.data)/64
 	b.chunks = make([]ShaChunk, numChunks)
 	for i := 0; i < numChunks; i++ {
-		for j := 0; j < 512; j++ {
+		for j := 0; j < 64; j++ {
 			b.chunks[i].data[j] = b.data[i*numChunks + j]
 		}
 		for j := 0; j < 16; j++ {
