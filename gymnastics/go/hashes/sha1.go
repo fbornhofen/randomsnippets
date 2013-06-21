@@ -141,8 +141,9 @@ func HexString(bs []byte) string {
 func main() {
 	flag.Parse()
 	args := flag.Args()
-	buffer := make([]byte, 4096)
 	f, _ := os.Open(args[0])
+	stat, _ := f.Stat()
+	buffer := make([]byte, stat.Size())
 	f.Read(buffer)
 	dig := ShaDigest(buffer)
 	fmt.Printf("%s\n", HexString(dig))
