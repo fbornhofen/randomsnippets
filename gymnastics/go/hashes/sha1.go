@@ -74,8 +74,8 @@ func writeBigEndianUInt(n uint32, slice []byte) {
 
 func ShaDigest(inbuf []byte) []byte {
 	b := MakeShaBuffer(inbuf)
-	fmt.Printf("buffer %s\n", 
-		HexString(b.data)) 
+	//fmt.Printf("buffer %s\n", 
+	//	HexString(b.data)) 
 	dig := make([]byte, 20)
 	h0 := uint32(0x67452301)
 	h1 := uint32(0xefcdab89)
@@ -149,11 +149,12 @@ func main() {
 	stat, _ := f.Stat()
 	buffer := make([]byte, stat.Size())
 	f.Read(buffer)
-	fmt.Printf("data len is %d\n", len(buffer))
+	//fmt.Printf("data len is %d\n", len(buffer))
 	dig := ShaDigest(buffer)
 	fmt.Printf("%s\n", HexString(dig))
 
 	d := sha1.New()
 	d.Write(buffer)
 	fmt.Printf("%s\n", HexString(d.Sum(nil)))
+
 }
