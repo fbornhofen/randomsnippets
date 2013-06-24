@@ -52,6 +52,17 @@ func MakeText(c uint) *Text {
 	return res
 }
 
+func MakeTextFromTriplets(xs []uint16) *Text {
+	res := new(Text)
+	res.capacity = uint(len(xs)) * 3
+	res.size = res.capacity
+	res.triplets = make([]LetterTriplet, len(xs))
+	for i, v := range(xs) {
+		res.triplets[i].data = v
+	}
+	return res
+}
+
 func (t *Text) SetText(s string) {
 	for i, v := range(s) {
 		t.triplets[i/3].Set(uint(i%3), byte(v))
@@ -74,6 +85,12 @@ func (t *Text) GetText() string {
 	return res
 }
 
+func (t *Text) Encrypt(e uint64, m uint64) {
+	for i, v := range(t.triplets) {
+		t.triplets[i].data = uint16(modPow(uint64(v.data), uint64(e), m))
+	}
+}
+
 func modPow(b uint64, e uint64, m uint64) uint64 {
 	var res uint64 = 1
 	for e > 0 {
@@ -88,5 +105,26 @@ func modPow(b uint64, e uint64, m uint64) uint64 {
 
 func main() {
 
-	fmt.Printf("%d\n", ^uint16(31<<2))
+	var m uint64 = 55189
+	var e uint64 = 91
+	var d uint64 = 451
+
+	msg := []uint16 {39491, 2899, 44184, 42704}
+	txt := MakeTextFromTriplets(msg)
+	txt.Encrypt(d, m)
+	fmt.Printf("%s\n", txt.GetText())
+	
+	s := "MORGEN UNTER DER BRUECKE"
+	txt = MakeText(uint(len(s)))
+	txt.SetText(s)
+	txt.Encrypt(e, m)
+	for _, v := range(txt.triplets) {
+		fmt.Printf("%d ", v.data)
+	}
+	fmt.Printf("\n")
+
+	txt = MakeTextFromTriplets([]uint16{19382, 36564, 28624, 129, 20649, 9040, 319, 1409})
+	txt.Encrypt(d, m)
+	fmt.Printf("%s\n", txt.GetText())
+
 }
