@@ -107,7 +107,7 @@ func main() {
 
 	var m uint64 = 55189
 	var e uint64 = 91
-	var d uint64 = 451
+	var d uint64 = 41491
 
 	msg := []uint16 {39491, 2899, 44184, 42704}
 	txt := MakeTextFromTriplets(msg)
