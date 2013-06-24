@@ -18,10 +18,6 @@ type ShaChunk struct {
 	words [80]uint32
 }
 
-/*
-#define SHA1CircularShift(bits,word) \
-                (((word) << (bits)) | ((word) >> (32-(bits))))
-*/
 func s(bits uint, word uint32) uint32 {
 	return ((word << bits) | (word >> (32 - bits)))
 }
@@ -33,8 +29,7 @@ func MakeShaBuffer(buf []byte) *ShaBuffer {
 	if newLen % 64 != 56 {
 		newLen = newLen + 56 - newLen % 64
 	}
-	newLen += 8 // original length
-	fmt.Printf("newLen is %d\n", newLen)
+	newLen += 8 // 8 bytes for original length
 	shaBuf.data = make([]byte, newLen)
 	shaBuf.data[shaBuf.originalLength] = 0x80
 	copy(shaBuf.data, buf)
@@ -60,7 +55,7 @@ func (b *ShaBuffer) chunkify() {
 		for j := 0; j < 16; j++ {
 			bs := b.chunks[i].data[j*4 : j*4 + 4]
 			b.chunks[i].words[j] = readBigEndianUInt(bs)
-			fmt.Printf("%d: w[%d] = %s\n", i, j, HexString(bs))
+			fmt.Printf("chunk %d: w[%d] = %s\n", i, j, HexString(bs))
 		}
 	}
 }
@@ -82,10 +77,7 @@ func writeBigEndianUInt(n uint32, slice []byte) {
 
 func ShaDigest(inbuf []byte) []byte {
 	b := MakeShaBuffer(inbuf)
-	//fmt.Printf("buffer %s\n", 
-	//	HexString(b.data)) 
 	dig := make([]byte, 20)
-	fmt.Printf("%s\n", HexString(dig))
 	h0 := uint32(0x67452301)
 	h1 := uint32(0xefcdab89)
 	h2 := uint32(0x98badcfe)
@@ -101,7 +93,7 @@ func ShaDigest(inbuf []byte) []byte {
 				ch.words[i-14] ^
 				ch.words[i-16]))
 			writeBigEndianUInt(ch.words[i], bs)
-			fmt.Printf("%d: w[%d] = %s\n", cidx, i, HexString(bs))
+			fmt.Printf("chunk %d: w[%d] = %s\n", cidx, i, HexString(bs))
 		}
 		a := h0
 		b := h1
@@ -161,11 +153,13 @@ func main() {
 	stat, _ := f.Stat()
 	buffer := make([]byte, stat.Size())
 	f.Read(buffer)
+
+	// Hash with my own implementation
 	dig := ShaDigest(buffer)
 	fmt.Printf("%s\n", HexString(dig))
 
+	// Hash with library implementation for verification
 	d := sha1.New()
 	d.Write(buffer)
 	fmt.Printf("%s\n", HexString(d.Sum(nil)))
-
 }
