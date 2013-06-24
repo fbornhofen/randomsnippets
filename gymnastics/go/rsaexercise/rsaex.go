@@ -21,7 +21,7 @@ func (t *LetterTriplet) Set(idx uint, value byte) {
 		value = value - 'A' + 1
 	}
 	v := uint16(value % 32)
-	shift := idx * 5
+	shift := (2-idx) * 5
 	v <<= shift
 	m := ^uint16(31<<shift)
 	t.data &= m
@@ -29,7 +29,7 @@ func (t *LetterTriplet) Set(idx uint, value byte) {
 }
 
 func (t *LetterTriplet) Get(idx uint) byte {
-	shift := idx * 5
+	shift := (2-idx) * 5
 	v := byte((t.data & (31 << shift)) >> shift)
 	if v == 0 {
 		return ' '
