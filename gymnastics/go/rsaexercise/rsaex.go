@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"math"
 )
 
 type LetterTriplet struct {
@@ -35,6 +36,42 @@ func (t *LetterTriplet) Get(idx uint) byte {
 		return ' '
 	}
 	return v + 'A' - 1
+}
+
+type Text struct {
+	size uint
+	capacity uint
+	triplets []LetterTriplet
+}
+
+func MakeText(c uint) *Text {
+	res := new(Text)
+	res.capacity = c
+	res.size = 0
+	res.triplets = make([]LetterTriplet, int(math.Ceil(float64(c)/3.0)))
+	return res
+}
+
+func (t *Text) SetText(s string) {
+	for i, v := range(s) {
+		t.triplets[i/3].Set(uint(i%3), byte(v))
+	}
+	t.size = uint(len(s))
+}
+
+func (t *Text) GetText() string {
+	res := ""
+	var l uint = 0
+	for i, _ := range(t.triplets) {
+		for j := 0; j < 3; j++ {
+			if l == t.size {
+				return res
+			}
+			l += 1
+			res += string(rune(t.triplets[i].Get(uint(j))))
+		}
+	}
+	return res
 }
 
 func modPow(b uint64, e uint64, m uint64) uint64 {

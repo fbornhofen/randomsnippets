@@ -23,3 +23,11 @@ func TestModPow(t *testing.T) {
 		t.Errorf("expected r is %d, not 3223", r)
 	}
 }
+
+func TestText(t *testing.T) {
+	txt := MakeText(10)
+	txt.SetText("HALLO WELT")
+	if txt.GetText() != "HALLO WELT" {
+		t.Errorf("expected 'HALLO WELT', got '%s'", txt.GetText())
+	}
+}
