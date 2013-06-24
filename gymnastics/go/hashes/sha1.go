@@ -85,6 +85,7 @@ func ShaDigest(inbuf []byte) []byte {
 	//fmt.Printf("buffer %s\n", 
 	//	HexString(b.data)) 
 	dig := make([]byte, 20)
+	fmt.Printf("%s\n", HexString(dig))
 	h0 := uint32(0x67452301)
 	h1 := uint32(0xefcdab89)
 	h2 := uint32(0x98badcfe)
@@ -127,7 +128,7 @@ func ShaDigest(inbuf []byte) []byte {
 			tmp := uint32(s(5, a) + f + e + k + ch.words[i])
 			e = d
 			d = c
-			c = b << 30
+			c = s(30, b)
 			b = a
 			a = tmp
 		}
