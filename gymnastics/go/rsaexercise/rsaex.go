@@ -1,35 +1,43 @@
 package main
 
 import (
-	"math"
-//	"fmt"
+	"fmt"
 )
 
-type CryptoBuffer struct {
-	capacity uint
-	size uint
-	data []byte
+type LetterTriplet struct {
+	data uint16
 }
 
-func MakeCryptoBuffer(capacity uint) *CryptoBuffer {
-	res := new(CryptoBuffer)
-	bytesCap := int(math.Ceil(float64(capacity)*5/8))
-	res.data = make([]byte, bytesCap)
-	res.capacity = capacity
-	res.size = 0
+func MakeLetterTriplet() *LetterTriplet {
+	res := new(LetterTriplet)
+	res.data = 0
 	return res
 }
 
-func (b *CryptoBuffer) Write5Bits(value byte) {
-	startByte := b.size * 5 / 8
-	var startOffset uint = b.size * 5 % 8
-	value = value & 31
-	usesNextByte := startOffset > 3
-	if !usesNextByte {
-		b.data[startByte] |= value << (3-startOffset)
+func (t *LetterTriplet) Set(idx uint, value byte) {
+	if value == ' ' {
+		value = 0
 	} else {
-		b.data[startByte] |= value >> (startOffset-3)
-		b.data[startByte+1] |= value << (11-startOffset)
+		value = value - 'A' + 1
 	}
-	b.size += 1
+	v := uint16(value % 32)
+	shift := idx * 5
+	v <<= shift
+	m := ^uint16(31<<shift)
+	t.data &= m
+	t.data |= v
+}
+
+func (t *LetterTriplet) Get(idx uint) byte {
+	shift := idx * 5
+	v := byte((t.data & (31 << shift)) >> shift)
+	if v == 0 {
+		return ' '
+	}
+	return v + 'A' - 1
+}
+
+func main() {
+
+	fmt.Printf("%d\n", ^uint16(31<<2))
 }
