@@ -16,3 +16,10 @@ func TestGetSet(t *testing.T) {
 		}
 	}
 }
+
+func TestModPow(t *testing.T) {
+	var r uint64 = modPow(5623, 4421, 6000)
+	if r != 3223 {
+		t.Errorf("expected r is %d, not 3223", r)
+	}
+}

@@ -37,6 +37,18 @@ func (t *LetterTriplet) Get(idx uint) byte {
 	return v + 'A' - 1
 }
 
+func modPow(b uint64, e uint64, m uint64) uint64 {
+	var res uint64 = 1
+	for e > 0 {
+		if e % 2 == 1 {
+			res = (res * b) % m
+		}
+		e = e >> 1
+		b = (b * b) % m
+	}
+	return res
+}
+
 func main() {
 
 	fmt.Printf("%d\n", ^uint16(31<<2))
