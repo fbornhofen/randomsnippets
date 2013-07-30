@@ -1,34 +1,33 @@
 #include <iostream>
+#include <set>
+#include <utility>
 #include <cstdlib>
-#include <map>
 
 using namespace std;
 
-class Position
+class Position : public pair<int, int>
 {
 public:
 
-    int x, y;
-
-    Position(int a, int b) : x(a), y(b) {
+    Position(int x, int y) : pair<int, int>(x, y) {
     }
 
-    Position() : x(-1), y(-1) {
+    Position() : pair<int, int>(-1, -1) {
     }
 
     bool IsValid() const {
-        return x >= 0 && y >= 0;
+        return first >= 0 && second >= 0;
     }
 
     bool Reaches(const Position& p) const {
         return IsValid() && p.IsValid() &&
-            (x == p.x ||
-             y == p.y ||
-             abs(y - p.y) == abs(x - p.x));
+            (first == p.first ||
+             second == p.second ||
+             abs(second - p.second) == abs(first - p.first));
     }
 
     void Print() const {
-        std::cout << "Position(" << x << "," << y << ")" << std::endl;
+        std::cout << "Position(" << first << "," << second << ")" << std::endl;
     }
 };
 
@@ -76,22 +75,28 @@ bool ReachesAny(const Position& p, const Stack<Position>& s) {
     return false;
 }
 
-void NQueens(int size, Stack<Position>* ps) {
-    // FIXME filter permutations
-    if (ps->Size() == size) {
+void NQueens(int size, int start_x, int start_y, Stack<Position>& ps, set<set<Position> >& solutions) {
+    if (ps.Size() == size) {
+        set<Position> solution;
         for (int i = 0; i < size; ++i) {
-            ps->Elements()[i].Print();
+            solution.insert(ps.Elements()[i]);
         }
-        cout << "---" << endl;
+        solutions.insert(solution);
         return;
     }
     for (int i = 0; i < size; ++i) {
         for (int j = 0; j < size; ++j) {
             Position p(i, j);
-            if (!ReachesAny(p, *ps)) {
-                ps->Push(p);
-                NQueens(size, ps);
-                ps->Pop();
+            if (!ReachesAny(p, ps)) {
+                int next_x = start_x + 1;
+                int next_y = start_y;
+                if (next_x == size) {
+                    next_x = 0;
+                    next_y++;
+                }
+                ps.Push(p);
+                NQueens(size, next_x, next_y, ps, solutions);
+                ps.Pop();
             }
         }
     }
@@ -104,5 +109,16 @@ int main(int argc, char** argv)
         size = atoi(argv[1]);
     }
     Stack<Position> s(size);
-    NQueens(size, &s);
+    set<set<Position> > solutions;
+    NQueens(size, 0, 0, s, solutions);
+    for (set<set<Position> >::iterator it = solutions.begin();
+         it != solutions.end();
+         ++it) {
+        for (set<Position>::iterator pos = it->begin();
+             pos != it->end();
+             ++pos) {
+            pos->Print();
+        }
+        cout << " ----- " << endl;
+    }
 }
